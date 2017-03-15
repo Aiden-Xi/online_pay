@@ -16,3 +16,4 @@ tmp
 test/tmp
 test/version_tmp
 .idea
+.idea/vcs.xml

@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = "An unofficial simple online pay gem"
   spec.description   = "An unofficial simple online pau gem"
-  spec.homepage      = ["https://github.com/xixiaoyu/online_pay"]
+  spec.homepage      = "https://github.com/xixiaoyu/online_pay"
 
   spec.require_paths = ["lib"]
 
