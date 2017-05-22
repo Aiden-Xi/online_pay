@@ -1,9 +1,6 @@
 require 'rest_client'
 require 'json'
-require 'cgi'
 require 'socket'
-require 'securerandom'
-require 'active_support/core_ext/hash/conversions'
 require 'online_pay/sheng_pay_sign'
 
 module OnlinePay
