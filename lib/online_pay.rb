@@ -23,29 +23,6 @@ module OnlinePay
     attr_accessor :wx_app_id, :wx_mch_id, :wx_key, :wx_app_secret, :wx_extra_rest_client_options,
     attr_reader :wx_apiclient_cert, :wx_apiclient_key
 
-
-    # payment_params = {
-    #     Name: ShengpayPaymentSetting.name,
-    #     Version: ShengpayPaymentSetting.payment_version,
-    #     Charset: ShengpayPaymentSetting.charset,
-    #     MsgSender: ShengpayPaymentSetting.merchant_id,
-    #     OrderNo: order_number,
-    #     # TODO: yicong 需要公共模型可以处理
-    #     # OrderAmount: format('%.2f', actual_price),
-    #     # TODO 测试阶段， 金额全部从零开始缴费
-    #     OrderAmount: format('%.2f', 0.1),
-    #     OrderTime: order_time.strftime('%Y%m%d%H%M%S'),
-    #     Currency: target_currency.code,
-    #     PageUrl: page_url,
-    #     NotifyUrl: notify_url,
-    #     BuyerIp: current_ip,
-    #     realName: student.name,
-    #     idNo: student.id_number,
-    #     mobile: student.phone,
-    #     Ext1: ext1,
-    #     SignType: ShengpayPaymentSetting.sign_type
-    # }
-
     # 盛付通支付相关参数
     attr_accessor :shengpay_name, :shengpay_payment_version, :shengpay_exchange_rate_version, :shengpay_merchant_id,
                   :shengpay_merchant_key, :shengpay_charset, :shengpay_sign_type
