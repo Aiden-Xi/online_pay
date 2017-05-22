@@ -11,9 +11,13 @@ module OnlinePay
   @wx_extra_rest_client_options = {}
 
   class << self
+    # 微信支付相关参数
     # wx_key 指的是 paterner_key
     attr_accessor :wx_app_id, :wx_mch_id, :wx_key, :wx_app_secret, :wx_extra_rest_client_options, :wx_debug_mode
     attr_reader :wx_apiclient_cert, :wx_apiclient_key
+
+    # 盛付通支付相关参数
+    attr_accessor :sft_
 
     def set_apiclient_by_pkcs12(str, pass)
       pkc12 = OpenSSL::PKCS12.new(str, pass)
