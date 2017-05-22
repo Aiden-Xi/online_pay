@@ -1,7 +1,7 @@
 require 'digest/md5'
 
 module OnlinePay
-  module Sign
+  module WxSign
     def self.generate(params)
       key = params.delete(:key)
 

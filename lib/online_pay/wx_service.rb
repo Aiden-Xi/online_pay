@@ -8,7 +8,6 @@ require 'online_pay/wx_result'
 
 module OnlinePay
   class WxService
-    GATEWAY_URL = 'https://api.mch.weixin.qq.com'
 
     def self.generate_authorize_url(redirect_uri, state = nil)
       state ||= SecureRandom.hex 16
@@ -42,6 +41,7 @@ module OnlinePay
     #
     # 扫码支付 - 统一下单接口：https://api.mch.weixin.qq.com/pay/unifiedorder
     # 不需要证书
+    GATEWAY_URL = 'https://api.mch.weixin.qq.com'
     INVOKE_UNIFIEDORDER_REQUIRED_FIELDS = [:body, :out_trade_no, :total_fee, :spbill_create_ip, :notify_url, :trade_type]
     def self.invoke_unifiedorder(params, options = {})
       params = {
@@ -93,7 +93,7 @@ module OnlinePay
 
       check_required_options(params, GENERATE_APP_PAY_REQ_REQUIRED_FIELDS)
 
-      params[:sign] = OnlinePay::Sign.generate(params)
+      params[:sign] = OnlinePay::WxSign.generate(params)
 
       params
     end
@@ -111,7 +111,7 @@ module OnlinePay
           signType: 'MD5'
       }.merge(params)
 
-      params[:paySign] = OnlinePay::Sign.generate(params)
+      params[:paySign] = OnlinePay::WxSign.generate(params)
       params
     end
 
@@ -361,7 +361,7 @@ module OnlinePay
       end
 
       def make_payload(params)
-        sign = OnlinePay::Sign.generate(params)
+        sign = OnlinePay::WxSign.generate(params)
         Rails.logger.info "sign = #{sign}"
         params.delete(:key) if params[:key]
         "<xml>#{params.map { |k, v| "<#{k}>#{v}</#{k}>" }.join}<sign>#{sign}</sign></xml>"

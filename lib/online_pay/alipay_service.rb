@@ -1,5 +1,5 @@
 module OnlinePay
-  class WxPay
+  class AlipayService
 
   end
 end
