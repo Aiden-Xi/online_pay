@@ -9,7 +9,7 @@ module OnlinePay
         "#{k}=#{v}" if v.to_s != ''
       end.compact.join('&')
 
-      Digest::MD5.hexdigest("#{query}&key=#{key || OnlinePay.key}").upcase
+      Digest::MD5.hexdigest("#{query}&key=#{key || OnlinePay.wx_key}").upcase
     end
 
     def self.verify?(params)

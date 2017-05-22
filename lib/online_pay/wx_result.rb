@@ -1,6 +1,6 @@
 module OnlinePay
   class WxResult < ::Hash
-    SUCCESS_FLAG = 'SUCCESS'.freeze
+    SUCCESS = 'SUCCESS'.freeze
 
     def initialize(result)
       super nil
@@ -15,7 +15,7 @@ module OnlinePay
     end
     
     def success?
-      self['return_code'] == SUCCESS_FLAG && self['result_code'] == SUCCESS_FLAG
+      self['return_code'] == SUCCESS && self['result_code'] == SUCCESS
     end
   end
 end
