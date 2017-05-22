@@ -4,10 +4,11 @@ require 'online_pay/sheng_fu_tong_pay'
 require 'online_pay/sign'
 require 'online_pay/version'
 require 'online_pay/wx_pay'
+require 'online_pay/wx_service'
 require 'openssl'
 
 module OnlinePay
-  @extra_rest_client_options = {}
+  @wx_extra_rest_client_options = {}
 
   class << self
     attr_accessor :wx_app_id, :wx_mch_id, :wx_key, :wx_app_secret, :wx_extra_rest_client_options, :wx_debug_mode
