@@ -7,7 +7,7 @@ module OnlinePay
   class ShengPayService
     # 支付url
     PaymentUrl = 'https://mas.shengpay.com/web-acquire-channel/cashier.htm?'
-    PAYMENT_PAY_PARAMS = [:OrderNo, :OrderAmount, :OrderTime, :Currency, :PageUrl, :NotifyUrl, :realName, :idNo, :mobile]
+    PAYMENT_PAY_PARAMS = [:OrderNo, :OrderAmount, :OrderTime, :Currency, :PageUrl, :NotifyUrl, :realName, :idNo, :mobile].map!(&:freeze).freeze
     def self.shengpay(params, options = {})
       params = {
           Name: options.delete(:Name) || OnlinePay.shengpay_name,
@@ -29,7 +29,7 @@ module OnlinePay
 
     # 查询汇率url
     ExchangeRateUrl = 'https://tradeexprod.shengpay.com/fexchange-web/rest/merchant/queryExchangeRate?'
-    EXCHANGE_RATE_PARAMS = [:foreignCurrency, :homeCurrency]
+    EXCHANGE_RATE_PARAMS = [:foreignCurrency, :homeCurrency].map!(&:freeze).freeze
     def self.exchange_rate(params, options = {})
       Rails.logger.info "online_pay#{OnlinePay.shengpay_merchant_id.class} --- #{OnlinePay.shengpay_charset.class}-----#{OnlinePay.shengpay_payment_version.class}"
       params = {

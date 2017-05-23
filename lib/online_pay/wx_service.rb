@@ -42,7 +42,7 @@ module OnlinePay
     # 扫码支付 - 统一下单接口：https://api.mch.weixin.qq.com/pay/unifiedorder
     # 不需要证书
     GATEWAY_URL = 'https://api.mch.weixin.qq.com'
-    INVOKE_UNIFIEDORDER_REQUIRED_FIELDS = [:body, :out_trade_no, :total_fee, :spbill_create_ip, :notify_url, :trade_type]
+    INVOKE_UNIFIEDORDER_REQUIRED_FIELDS = [:body, :out_trade_no, :total_fee, :spbill_create_ip, :notify_url, :trade_type].map!(&:freeze).freeze
     def self.invoke_unifiedorder(params, options = {})
       params = {
           appid: options.delete(:appid) || OnlinePay.wx_app_id,
@@ -63,7 +63,7 @@ module OnlinePay
 
     # 订单关闭接口 - URL：https://api.mch.weixin.qq.com/pay/closeorder
     # 不需要证书
-    INVOKE_CLOSEORDER_REQUIRED_FIELDS = [:out_trade_no]
+    INVOKE_CLOSEORDER_REQUIRED_FIELDS = [:out_trade_no].map!(&:freeze).freeze
     def self.invoke_closeorder(params, options = {})
       params = {
           appid: options.delete(:appid) || OnlinePay.wx_app_id,
@@ -81,7 +81,7 @@ module OnlinePay
       r
     end
 
-    GENERATE_APP_PAY_REQ_REQUIRED_FIELDS = [:prepayid, :noncestr]
+    GENERATE_APP_PAY_REQ_REQUIRED_FIELDS = [:prepayid, :noncestr].map!(&:freeze).freeze
     def self.generate_app_pay_req(params, options = {})
       params = {
           appid: options.delete(:appid) || OnlinePay.wx_app_id,
@@ -98,7 +98,7 @@ module OnlinePay
       params
     end
 
-    GENERATE_JS_PAY_REQ_REQUIRED_FIELDS = [:prepayid, :noncestr]
+    GENERATE_JS_PAY_REQ_REQUIRED_FIELDS = [:prepayid, :noncestr].map!(&:freeze).freeze
     def self.generate_js_pay_req(params, options = {})
       check_required_options(params, GENERATE_JS_PAY_REQ_REQUIRED_FIELDS)
 
@@ -118,7 +118,7 @@ module OnlinePay
     # 申请退款接口 - URL： https://api.mch.weixin.qq.com/secapi/pay/refund
     # 需要证书（证书使用详情） - 具体使用URL： https://pay.weixin.qq.com/wiki/doc/api/native.php?chapter=4_3
     # out_trade_no 和 transaction_id 是二选一(必填)
-    INVOKE_REFUND_REQUIRED_FIELDS = [:out_refund_no, :total_fee, :refund_fee, :op_user_id]
+    INVOKE_REFUND_REQUIRED_FIELDS = [:out_refund_no, :total_fee, :refund_fee, :op_user_id].map!(&:freeze).freeze
     def self.invoke_refund(params, options = {})
       params = {
           appid: options.delete(:appid) || OnlinePay.wx_app_id,
@@ -146,7 +146,7 @@ module OnlinePay
 
     # 退款查询接口 - URL： https://api.mch.weixin.qq.com/pay/refundquery
     # 不需要证书
-    REFUND_QUERY_REQUIRED_FIELDS = [:out_trade_no]
+    REFUND_QUERY_REQUIRED_FIELDS = [:out_trade_no].map!(&:freeze).freeze
     def self.refund_query(params, options = {})
       params = {
           appid: options.delete(:appid) || OnlinePay.wx_app_id,
@@ -165,7 +165,7 @@ module OnlinePay
 
     # 企业付款 - URL： https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers
     # 需要使用证书
-    INVOKE_TRANSFER_REQUIRED_FIELDS = [:partner_trade_no, :openid, :check_name, :amount, :desc, :spbill_create_ip]
+    INVOKE_TRANSFER_REQUIRED_FIELDS = [:partner_trade_no, :openid, :check_name, :amount, :desc, :spbill_create_ip].map!(&:freeze).freeze
     def self.invoke_transfer(params, options = {})
       params = {
           mch_appid: options.delete(:appid) || OnlinePay.wx_app_id,
@@ -190,7 +190,7 @@ module OnlinePay
 
     # 查询企业付款 - URL： https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo
     # 需要使用证书
-    GETTRANSFERINFO_FIELDS = [:partner_trade_no]
+    GETTRANSFERINFO_FIELDS = [:partner_trade_no].map!(&:freeze).freeze
     def self.gettransferinfo(params, options = {})
       params = {
           appid: options.delete(:appid) || OnlinePay.wx_app_id,
@@ -215,7 +215,7 @@ module OnlinePay
 
     # 撤销订单 - URL： https://api.mch.weixin.qq.com/secapi/pay/reverse
     # 需要使用证书
-    INVOKE_REVERSE_REQUIRED_FIELDS = [:out_trade_no]
+    INVOKE_REVERSE_REQUIRED_FIELDS = [:out_trade_no].map!(&:freeze).freeze
     def self.invoke_reverse(params, options = {})
       params = {
           appid: options.delete(:appid) || OnlinePay.wx_app_id,
@@ -240,7 +240,7 @@ module OnlinePay
 
     # 微信刷卡支付 - URL： https://api.mch.weixin.qq.com/pay/micropay
     # 不需要证书
-    INVOKE_MICROPAY_REQUIRED_FIELDS = [:body, :out_trade_no, :total_fee, :spbill_create_ip, :auth_code]
+    INVOKE_MICROPAY_REQUIRED_FIELDS = [:body, :out_trade_no, :total_fee, :spbill_create_ip, :auth_code].map!(&:freeze).freeze
     def self.invoke_micropay(params, options = {})
       params = {
           appid: options.delete(:appid) || OnlinePay.wx_app_id,
@@ -266,7 +266,7 @@ module OnlinePay
     #
     # 订单查询接口， URL：https://api.mch.weixin.qq.com/pay/orderquery
     # 不需要证书
-    ORDER_QUERY_REQUIRED_FIELDS = [:out_trade_no]
+    ORDER_QUERY_REQUIRED_FIELDS = [:out_trade_no].map!(&:freeze).freeze
     def self.order_query(params, options = {})
       params = {
           appid: options.delete(:appid) || OnlinePay.wx_app_id,
@@ -285,7 +285,7 @@ module OnlinePay
 
     # 下载对账单接口 - URL： https://api.mch.weixin.qq.com/pay/downloadbill
     # 不需要证书
-    DOWNLOAD_BILL_REQUIRED_FIELDS = [:bill_date, :bill_type]
+    DOWNLOAD_BILL_REQUIRED_FIELDS = [:bill_date, :bill_type].map!(&:freeze).freeze
     def self.download_bill(params, options = {})
       params = {
           appid: options.delete(:appid) || OnlinePay.wx_app_id,
