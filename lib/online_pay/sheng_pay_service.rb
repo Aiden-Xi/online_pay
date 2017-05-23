@@ -31,6 +31,7 @@ module OnlinePay
     ExchangeRateUrl = 'https://tradeexprod.shengpay.com/fexchange-web/rest/merchant/queryExchangeRate?'
     EXCHANGE_RATE_PARAMS = [:foreignCurrency, :homeCurrency]
     def self.exchange_rate(params, options = {})
+      Rails.logger.info "online_pay#{OnlinePay.shengpay_merchant_id.class} --- #{OnlinePay.shengpay_charset.class}-----#{OnlinePay.shengpay_payment_version.class}"
       params = {
           merchantId: params.delete(:merchantId) || OnlinePay.shengpay_merchant_id,
           charset: params.delete(:charset) || OnlinePay.shengpay_charset,
@@ -46,7 +47,7 @@ module OnlinePay
 
       rest_client = RestClient.get exchange_rate_url
 
-      JSON.parse(rest_client.body)['exSellPrice']
+      JSON.parse(rest_client.body)
     end
 
     private
