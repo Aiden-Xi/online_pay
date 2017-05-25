@@ -31,11 +31,10 @@ module OnlinePay
     ExchangeRateUrl = 'https://tradeexprod.shengpay.com/fexchange-web/rest/merchant/queryExchangeRate?'
     EXCHANGE_RATE_PARAMS = [:foreignCurrency, :homeCurrency].map!(&:freeze).freeze
     def self.exchange_rate(params, options = {})
-      Rails.logger.info "online_pay#{OnlinePay.shengpay_merchant_id.class} --- #{OnlinePay.shengpay_charset.class}-----#{OnlinePay.shengpay_payment_version.class}"
       params = {
           merchantId: params.delete(:merchantId) || OnlinePay.shengpay_merchant_id,
           charset: params.delete(:charset) || OnlinePay.shengpay_charset,
-          version: params.delete(:version) || OnlinePay.shengpay_payment_version
+          version: params.delete(:version) || OnlinePay.shengpay_exchange_rate_version
       }.merge(params)
 
       check_required_options(params, EXCHANGE_RATE_PARAMS)
