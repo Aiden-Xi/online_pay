@@ -28,7 +28,9 @@ module OnlinePay
     attr_accessor :shengpay_name, :shengpay_payment_version, :shengpay_exchange_rate_version, :shengpay_merchant_id,
                   :shengpay_merchant_key, :shengpay_charset, :shengpay_sign_type
     # 盛付通退款相关
-    attr_accessor :shengpay_service_code, :shengpay_sender_id
+    attr_accessor :shengrefund_sender_id, :shengrefund_version, :shengrefund_service_code
+    # 盛付通订单查询
+    attr_accessor :shengquery_service_code, :shengquery_version
 
 
     def set_apiclient_by_pkcs12(str, pass)

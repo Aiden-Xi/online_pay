@@ -28,16 +28,16 @@ module OnlinePay
     end
 
     # 退款申请
-    RefundUrl = 'https://mas.shengpay.com/api-acquire-channel/services/refundService?wsdl'
-    REFUND_PARAMS = [:SendTime, :RefundOrderNo, :OriginalOrderNo, :RefundAmount, :NotifyURL]
+    RefundUrl = 'https://mas.shengpay.com/api-acquire-channel/services/refundService?'
+    REFUND_PARAMS = [:SendTime, :RefundOrderNo, :OriginalOrderNo, :RefundAmount, :NotifyURL, :RefundRoute]
     def self.sheng_refund(params, options = {})
       params = {
-          ServiceCode: params.delete(:ServiceCode) || OnlinePay.shengpay_service_code,
-          Version: options.delete(:Version) || OnlinePay.shengpay_payment_version,
+          ServiceCode: params.delete(:ServiceCode) || OnlinePay.shengrefund_service_code,
+          Version: options.delete(:Version) || OnlinePay.shengrefund_payment_version,
           Charset: options.delete(:Charset) || OnlinePay.shengpay_charset,
-          SenderId: options.delete(:SenderId) || OnlinePay.shengpay_sender_id,
+          SenderId: options.delete(:SenderId) || OnlinePay.shengpay_merchant_id,
           merchantNo: params.delete(:merchantId) || OnlinePay.shengpay_merchant_id,
-          SignType: options.delete(:SignType) || OnlinePay.shengpay_sign_type,
+          SignType: options.delete(:SignType) || OnlinePay.shengpay_sign_type
       }.merge(params)
 
       check_required_options(params, REFUND_PARAMS)
@@ -47,6 +47,28 @@ module OnlinePay
       refund_url = get_refund_url params, sign
 
       refund_url
+    end
+
+    # 订单查询
+    QueryUrl = 'https://mas.shengpay.com/api-acquire-channel/services/queryOrderService?'
+    QUERY_PARAMS = [:SendTime, :OrderNo, :TransNo]
+    def self.query_order(params, options = {})
+      params = {
+          ServiceCode: params.delete(:ServiceCode) || OnlinePay.shengquery_service_code,
+          Version: options.delete(:Version) || OnlinePay.shengquery_version,
+          Charset: options.delete(:Charset) || OnlinePay.shengpay_charset,
+          SenderId: options.delete(:SenderId) || OnlinePay.shengpay_merchant_id,
+          merchantNo: params.delete(:merchantId) || OnlinePay.shengpay_merchant_id,
+          SignType: options.delete(:SignType) || OnlinePay.shengpay_sign_type
+      }.merge(params)
+
+      check_required_options(params, QUERY_PARAMS)
+
+      sign = OnlinePay::ShengPaySign.generate params
+
+      query_url = get_query_url params, sign
+
+      query_url
     end
 
     # 查询汇率url
@@ -106,6 +128,11 @@ module OnlinePay
     # 生成退款的URL
     def self.get_refund_url(params, sign)
       RefundUrl + params.merge(SignMsg: sign).map { |k, v| "#{k}=#{v}" }.join('&')
+    end
+
+    # 生成查询URL
+    def self.get_query_url(params, sign)
+      QueryUrl + params.merge(SignMsg: sign).map { |k, v| "#{k}=#{v}" }.join('&')
     end
 
   end
