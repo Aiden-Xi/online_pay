@@ -27,6 +27,28 @@ module OnlinePay
       payment_url
     end
 
+    # 退款申请
+    RefundUrl = 'https://mas.shengpay.com/api-acquire-channel/services/refundService?wsdl'
+    REFUND_PARAMS = [:SendTime, :RefundOrderNo, :OriginalOrderNo, :RefundAmount, :NotifyURL]
+    def self.sheng_refund(params, options = {})
+      params = {
+          ServiceCode: params.delete(:ServiceCode) || OnlinePay.shengpay_service_code,
+          Version: options.delete(:Version) || OnlinePay.shengpay_payment_version,
+          Charset: options.delete(:Charset) || OnlinePay.shengpay_charset,
+          SenderId: options.delete(:SenderId) || OnlinePay.shengpay_sender_id,
+          merchantNo: params.delete(:merchantId) || OnlinePay.shengpay_merchant_id,
+          SignType: options.delete(:SignType) || OnlinePay.shengpay_sign_type,
+      }.merge(params)
+
+      check_required_options(params, REFUND_PARAMS)
+
+      sign = OnlinePay::ShengPaySign.generate params
+
+      refund_url = get_refund_url params, sign
+
+      refund_url
+    end
+
     # 查询汇率url
     ExchangeRateUrl = 'https://tradeexprod.shengpay.com/fexchange-web/rest/merchant/queryExchangeRate?'
     EXCHANGE_RATE_PARAMS = [:foreignCurrency, :homeCurrency].map!(&:freeze).freeze
@@ -49,6 +71,24 @@ module OnlinePay
       JSON.parse(rest_client.body)
     end
 
+    # 获取防钓鱼时间戳
+    SendTimeUrl = 'https://api.shengpay.com/mas/v1/timestamp?'
+    SEND_TIME_PARAMS = [:merchantNo].map!(&:freeze).freeze
+    def self.get_send_time(params, options = {})
+      params = {
+          merchantNo: params.delete(:merchantId) || OnlinePay.shengpay_merchant_id
+      }.merge(params)
+
+      check_required_options(params, SEND_TIME_PARAMS)
+
+      send_time_url = SendTimeUrl + params.map { |k, v| "#{k}=#{v}" }.join('&')
+
+      rest_client = RestClient.get send_time_url
+
+      JSON.parse(rest_client)
+    end
+
+
     private
     # 检查必须参数
     def self.check_required_options(options, names)
@@ -61,6 +101,11 @@ module OnlinePay
     # 生成支付的URL
     def self.get_payment_url(params, sign)
       PaymentUrl + params.merge(SignMsg: sign).map { |k, v| "#{k}=#{v}" }.join('&')
+    end
+
+    # 生成退款的URL
+    def self.get_refund_url(params, sign)
+      RefundUrl + params.merge(SignMsg: sign).map { |k, v| "#{k}=#{v}" }.join('&')
     end
 
   end

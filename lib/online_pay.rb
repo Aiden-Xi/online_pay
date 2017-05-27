@@ -24,8 +24,12 @@ module OnlinePay
     attr_reader :wx_apiclient_cert, :wx_apiclient_key
 
     # 盛付通支付相关参数
+    # 支付相关
     attr_accessor :shengpay_name, :shengpay_payment_version, :shengpay_exchange_rate_version, :shengpay_merchant_id,
                   :shengpay_merchant_key, :shengpay_charset, :shengpay_sign_type
+    # 盛付通退款相关
+    attr_accessor :shengpay_service_code, :shengpay_sender_id
+
 
     def set_apiclient_by_pkcs12(str, pass)
       pkc12 = OpenSSL::PKCS12.new(str, pass)
