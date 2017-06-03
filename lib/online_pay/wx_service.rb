@@ -49,7 +49,7 @@ module OnlinePay
           mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
           key: options.delete(:key) || OnlinePay.wx_key,
           nonce_str: SecureRandom.uuid.tr('-', ''),
-          spbill_create_ip: Socket::getaddrinfo(Socket.gethostname,"echo",Socket::AF_INET)[0][3]
+          spbill_create_ip: ::Socket::getaddrinfo(Socket.gethostname,"echo",Socket::AF_INET)[0][3]
       }.merge(params)
 
       check_required_options(params, INVOKE_UNIFIEDORDER_REQUIRED_FIELDS)
