@@ -3,11 +3,10 @@ require 'digest/md5'
 module OnlinePay
   class ShengPaySign
     def self.generate(params)
-      key = params.delete(:key)
-
       payment_values = params.values.compact
-
-      Digest::MD5.hexdigest(payment_values.join('|') + '|' + (key || OnlinePay.shengpay_merchant_key)).upcase
+      sign = Digest::MD5.hexdigest(payment_values.join('|') + '|' + OnlinePay.shengpay_merchant_key).upcase
+      puts "生成的签名sign = #{sign}"
+      sign
     end
 
     def self.verify?(params)

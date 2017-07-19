@@ -1,26 +1,27 @@
 require 'rest_client'
 require 'json'
-require 'socket'
 require 'online_pay/sheng_pay_sign'
 
 module OnlinePay
   class ShengPayService
     # 支付url
     PaymentUrl = 'https://mas.shengpay.com/web-acquire-channel/cashier.htm?'
-    PAYMENT_PAY_PARAMS = [:OrderNo, :OrderAmount, :OrderTime, :Currency, :PageUrl, :NotifyUrl, :realName, :idNo, :mobile].map!(&:freeze).freeze
+    PAYMENT_PAY_PARAMS = [:OrderNo, :OrderAmount, :OrderTime, :PageUrl, :NotifyUrl, :realName, :idNo, :mobile].map!(&:freeze).freeze
     def self.shengpay(params, options = {})
       params = {
-          Name: options.delete(:Name) || OnlinePay.shengpay_name,
-          Version: options.delete(:Version) || OnlinePay.shengpay_payment_version,
-          Charset: options.delete(:Charset) || OnlinePay.shengpay_charset,
-          MsgSender: options.delete(:MsgSender) || OnlinePay.shengpay_merchant_id,
-          SignType: options.delete(:SignType) || OnlinePay.shengpay_sign_type,
-          BuyerIp: Socket::getaddrinfo(Socket.gethostname,"echo",Socket::AF_INET)[0][3]
-      }.merge(params)
+          Name: OnlinePay.shengpay_name,
+          Version: OnlinePay.shengpay_payment_version,
+          Charset: OnlinePay.shengpay_charset,
+          MsgSender: OnlinePay.shengpay_merchant_id
+      }.merge(params).merge(SignType: OnlinePay.shengpay_sign_type)
+
+      puts "请求参数 = #{params}"
 
       check_required_options(params, PAYMENT_PAY_PARAMS)
 
       sign = OnlinePay::ShengPaySign.generate params
+
+      puts "签名字符串： #{sign}"
 
       payment_url = get_payment_url(params, sign)
 
@@ -32,13 +33,12 @@ module OnlinePay
     REFUND_PARAMS = [:SendTime, :RefundOrderNo, :OriginalOrderNo, :RefundAmount, :NotifyURL, :RefundRoute]
     def self.sheng_refund(params, options = {})
       params = {
-          ServiceCode: params.delete(:ServiceCode) || OnlinePay.shengrefund_service_code,
-          Version: options.delete(:Version) || OnlinePay.shengrefund_payment_version,
-          Charset: options.delete(:Charset) || OnlinePay.shengpay_charset,
-          SenderId: options.delete(:SenderId) || OnlinePay.shengpay_merchant_id,
-          merchantNo: params.delete(:merchantId) || OnlinePay.shengpay_merchant_id,
-          SignType: options.delete(:SignType) || OnlinePay.shengpay_sign_type
-      }.merge(params)
+          ServiceCode: OnlinePay.shengrefund_service_code,
+          Version: OnlinePay.shengrefund_payment_version,
+          Charset: OnlinePay.shengpay_charset,
+          SenderId: OnlinePay.shengpay_merchant_id,
+          merchantNo: OnlinePay.shengpay_merchant_id
+      }.merge(params).merge(SignType: OnlinePay.shengpay_sign_type)
 
       check_required_options(params, REFUND_PARAMS)
 
@@ -54,13 +54,12 @@ module OnlinePay
     QUERY_PARAMS = [:SendTime, :OrderNo, :TransNo]
     def self.query_order(params, options = {})
       params = {
-          ServiceCode: params.delete(:ServiceCode) || OnlinePay.shengquery_service_code,
-          Version: options.delete(:Version) || OnlinePay.shengquery_version,
-          Charset: options.delete(:Charset) || OnlinePay.shengpay_charset,
-          SenderId: options.delete(:SenderId) || OnlinePay.shengpay_merchant_id,
-          merchantNo: params.delete(:merchantId) || OnlinePay.shengpay_merchant_id,
-          SignType: options.delete(:SignType) || OnlinePay.shengpay_sign_type
-      }.merge(params)
+          ServiceCode: OnlinePay.shengquery_service_code,
+          Version: OnlinePay.shengquery_version,
+          Charset: OnlinePay.shengpay_charset,
+          SenderId: OnlinePay.shengpay_merchant_id,
+          merchantNo: OnlinePay.shengpay_merchant_id
+      }.merge(params).merge(SignType: OnlinePay.shengpay_sign_type)
 
       check_required_options(params, QUERY_PARAMS)
 
