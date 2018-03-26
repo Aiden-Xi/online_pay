@@ -41,7 +41,8 @@ module OnlinePay
     #
     # 扫码支付 - 统一下单接口：https://api.mch.weixin.qq.com/pay/unifiedorder
     # 不需要证书
-    GATEWAY_URL = 'https://api.mch.weixin.qq.com'
+    # GATEWAY_URL = 'https://api.mch.weixin.qq.com'
+    GATEWAY_URL = 'https://apitest.mch.weixin.qq.com/sandboxnew' # TODO - 新的根证书测试
     INVOKE_UNIFIEDORDER_REQUIRED_FIELDS = [:body, :out_trade_no, :total_fee, :spbill_create_ip, :notify_url, :trade_type].map!(&:freeze).freeze
     def self.invoke_unifiedorder(params, options = {})
       params = {
@@ -54,7 +55,9 @@ module OnlinePay
 
       check_required_options(params, INVOKE_UNIFIEDORDER_REQUIRED_FIELDS)
 
-      r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{GATEWAY_URL}/pay/unifiedorder", make_payload(params), options)))
+      # r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{GATEWAY_URL}/pay/unifiedorder", make_payload(params), options)))
+
+      r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{GATEWAY_URL}/pay/getsignkey", make_payload(params), options)))
 
       yield r if block_given?
 
