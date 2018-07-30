@@ -275,8 +275,8 @@ module OnlinePay
       }.merge(params)
 
 
-      r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{GATEWAY_URL}/pay/orderquery", make_payload(params), options)))
       check_required_options(params, ORDER_QUERY_REQUIRED_FIELDS)
+      r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{GATEWAY_URL}/pay/orderquery", make_payload(params), options)))
 
       yield r if block_given?
 
