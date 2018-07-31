@@ -54,7 +54,16 @@ module OnlinePay
 
       check_required_options(params, INVOKE_UNIFIEDORDER_REQUIRED_FIELDS)
 
-      r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{GATEWAY_URL}/pay/unifiedorder", make_payload(params), options)))
+      is_sandboxnew = params.delete(:is_sandboxnew)
+
+      if is_sandboxnew
+        sandboxnew_result = get_sign_key(sign = OnlinePay::WxSign.generate(params), options)
+        sand_sign_key = sandboxnew_result.dig('xml', 'sandbox_signkey')
+        params.merge!(sign: sand_sign_key)
+        r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{GATEWAY_URL}/sandboxnew/pay/unifiedorder", make_payload(params), options)))
+      else
+        r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{GATEWAY_URL}/pay/unifiedorder", make_payload(params), options)))
+      end
 
       yield r if block_given?
 
@@ -350,6 +359,22 @@ module OnlinePay
       r
     end
 
+    # 获取 sandboxnew 验签秘钥API - URL: https://api.mch.weixin.qq.com/sandboxnew/pay/getsignkey
+    # 不需要证书
+    def self.get_sign_key(sign, options = {})
+      params = {
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          nonce_str: SecureRandom.uuid.tr('-', ''),
+          sign: sign
+      }
+
+      r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{GATEWAY_URL}/sandboxnew/pay/getsignkey", make_payload(params), options)))
+
+      yield r if block_given?
+
+      r
+    end
+
     class << self
       private
 
@@ -361,8 +386,7 @@ module OnlinePay
       end
 
       def make_payload(params)
-        sign = OnlinePay::WxSign.generate(params)
-        Rails.logger.info "sign = #{sign}"
+        sign = params.delete(:sign) || OnlinePay::WxSign.generate(params)
         params.delete(:key) if params[:key]
         "<xml>#{params.map { |k, v| "<#{k}>#{v}</#{k}>" }.join}<sign>#{sign}</sign></xml>"
       end
