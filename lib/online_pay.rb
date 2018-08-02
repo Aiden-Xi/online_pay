@@ -13,10 +13,11 @@ require 'openssl'
 module OnlinePay
   @wx_extra_rest_client_options = {}
   @debug_mode = true
+  @sandboxnew_mode = true
 
   class << self
     # 公用参数
-    attr_accessor :debug_mode
+    attr_accessor :debug_mode, :sandboxnew_mode
 
     # 微信支付相关参数
     # wx_key 指的是 paterner_key
@@ -51,6 +52,11 @@ module OnlinePay
     def debug_mode?
       @debug_mode || false
     end
+
+    def sandboxnew_mode?
+      @sandboxnew_mode || false
+    end
+
   end
 
 end
