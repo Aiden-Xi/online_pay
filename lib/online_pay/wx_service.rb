@@ -401,14 +401,11 @@ module OnlinePay
 
       def make_payload(params)
         sign = OnlinePay::WxSign.generate(params)
-
         if OnlinePay.sandboxnew_mode?
           sandboxnew_result = get_sign_key(sign)
-          sandbox_signkey   = sandboxnew_result.fetch('sandbox_signkey', nil)
-          params[:key]      = sandbox_signkey
+          params[:key]      = sandboxnew_result.fetch('sandbox_signkey', nil)
           sign              = OnlinePay::WxSign.generate(params)
         end
-
         params.delete(:key) if params[:key]
         "<xml>#{params.map { |k, v| "<#{k}>#{v}</#{k}>" }.join}<sign>#{sign}</sign></xml>"
       end
@@ -420,7 +417,6 @@ module OnlinePay
 
       def invoke_remote(url, payload, options = {})
         options = OnlinePay.wx_extra_rest_client_options.merge(options)
-
         RestClient::Request.execute(
             {
                 method:  :post,
