@@ -51,7 +51,7 @@ module OnlinePay
           appid:            options.delete(:appid) || OnlinePay.wx_app_id,
           mch_id:           options.delete(:mch_id) || OnlinePay.wx_mch_id,
           key:              options.delete(:key) || OnlinePay.wx_key,
-          nonce_str:        SecureRandom.uuid.tr('-', ''),
+          nonce_str:        SecureRandom.hex,
           spbill_create_ip: ::Socket::getaddrinfo(Socket.gethostname, "echo", Socket::AF_INET)[0][3]
       }.merge(params)
 
@@ -75,7 +75,7 @@ module OnlinePay
           appid:     options.delete(:appid) || OnlinePay.wx_app_id,
           mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
           key:       options.delete(:key) || OnlinePay.wx_key,
-          nonce_str: SecureRandom.uuid.tr('-', '')
+          nonce_str: SecureRandom.hex
       }.merge(params)
 
       check_required_options(params, INVOKE_CLOSEORDER_REQUIRED_FIELDS)
@@ -132,7 +132,7 @@ module OnlinePay
       params = {
           appid:     options.delete(:appid) || OnlinePay.wx_app_id,
           mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          nonce_str: SecureRandom.uuid.tr('-', ''),
+          nonce_str: SecureRandom.hex,
       }.merge(params)
 
       params[:op_user_id] ||= params[:mch_id]
@@ -161,7 +161,7 @@ module OnlinePay
       params = {
           appid:     options.delete(:appid) || OnlinePay.wx_app_id,
           mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          nonce_str: SecureRandom.uuid.tr('-', '')
+          nonce_str: SecureRandom.hex
       }.merge(params)
 
       check_required_options(params, ORDER_QUERY_REQUIRED_FIELDS)
@@ -181,7 +181,7 @@ module OnlinePay
       params = {
           mch_appid: options.delete(:appid) || OnlinePay.wx_app_id,
           mchid:     options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          nonce_str: SecureRandom.uuid.tr('-', '')
+          nonce_str: SecureRandom.hex
       }.merge(params)
 
       check_required_options(params, INVOKE_TRANSFER_REQUIRED_FIELDS)
@@ -207,7 +207,7 @@ module OnlinePay
       params = {
           appid:     options.delete(:appid) || OnlinePay.wx_app_id,
           mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          nonce_str: SecureRandom.uuid.tr('-', '')
+          nonce_str: SecureRandom.hex
       }.merge(params)
 
       check_required_options(params, GETTRANSFERINFO_FIELDS)
@@ -233,7 +233,7 @@ module OnlinePay
       params = {
           appid:     options.delete(:appid) || OnlinePay.wx_app_id,
           mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          nonce_str: SecureRandom.uuid.tr('-', '')
+          nonce_str: SecureRandom.hex
       }.merge(params)
 
       check_required_options(params, INVOKE_REVERSE_REQUIRED_FIELDS)
@@ -259,7 +259,7 @@ module OnlinePay
       params = {
           appid:     options.delete(:appid) || OnlinePay.wx_app_id,
           mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          nonce_str: SecureRandom.uuid.tr('-', '')
+          nonce_str: SecureRandom.hex
       }.merge(params)
 
       check_required_options(params, INVOKE_MICROPAY_REQUIRED_FIELDS)
@@ -286,7 +286,7 @@ module OnlinePay
       params = {
           appid:     options.delete(:appid) || OnlinePay.wx_app_id,
           mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          nonce_str: SecureRandom.uuid.tr('-', '')
+          nonce_str: SecureRandom.hex
       }.merge(params)
 
 
@@ -300,13 +300,14 @@ module OnlinePay
 
     # 下载对账单接口 - URL： https://api.mch.weixin.qq.com/pay/downloadbill
     # 不需要证书
+    # FIXME: 只能下载三个月以内的对账单
     DOWNLOAD_BILL_REQUIRED_FIELDS = [:bill_date, :bill_type].map!(&:freeze).freeze
 
     def self.download_bill(params, options = {})
       params = {
           appid:     options.delete(:appid) || OnlinePay.wx_app_id,
           mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          nonce_str: SecureRandom.uuid.tr('-', ''),
+          nonce_str: SecureRandom.hex,
       }.merge(params)
 
       check_required_options(params, DOWNLOAD_BILL_REQUIRED_FIELDS)
@@ -324,7 +325,7 @@ module OnlinePay
       params = {
           wxappid:   options.delete(:appid) || OnlinePay.wx_app_id,
           mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          nonce_str: SecureRandom.uuid.tr('-', '')
+          nonce_str: SecureRandom.hex
       }.merge(params)
 
       #check_required_options(params, INVOKE_MICROPAY_REQUIRED_FIELDS)
@@ -348,7 +349,7 @@ module OnlinePay
       params = {
           wxappid:   options.delete(:appid) || OnlinePay.wx_app_id,
           mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          nonce_str: SecureRandom.uuid.tr('-', '')
+          nonce_str: SecureRandom.hex
       }.merge(params)
 
       #check_required_options(params, INVOKE_MICROPAY_REQUIRED_FIELDS)
@@ -374,7 +375,7 @@ module OnlinePay
     def self.get_sign_key(sign, options = {})
       params = {
           mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          nonce_str: SecureRandom.uuid.tr('-', ''),
+          nonce_str: SecureRandom.hex,
           sign:      sign
       }
 
