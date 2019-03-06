@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
 
 
-  spec.add_runtime_dependency "rest-client", ">= 1.7.3"
+  spec.add_runtime_dependency "rest-client", ">= 1.8.0"
   spec.add_runtime_dependency "activesupport", ">= 5.0.0"
 
   spec.add_development_dependency "bundler", "~> 1.13"
