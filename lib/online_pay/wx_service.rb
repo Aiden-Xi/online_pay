@@ -19,24 +19,24 @@ module OnlinePay
 
     def self.authenticate(authorization_code, options = {})
       options = OnlinePay.extra_rest_client_options.merge(options)
-      url     = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=#{OnlinePay.wx_app_id}&secret=#{OnlinePay.wx_app_secret}&code=#{authorization_code}&grant_type=authorization_code"
+      url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=#{OnlinePay.wx_app_id}&secret=#{OnlinePay.wx_app_secret}&code=#{authorization_code}&grant_type=authorization_code"
 
       ::JSON.parse(RestClient::Request.execute(
           {
               method: :get,
-              url:    url
+              url: url
           }.merge(options)
       ), quirks_mode: true)
     end
 
     def self.authenticate_from_weapp(js_code, options = {})
       options = OnlinePay.extra_rest_client_options.merge(options)
-      url     = "https://api.weixin.qq.com/sns/jscode2session?appid=#{OnlinePay.wx_app_id}&secret=#{OnlinePay.wx_app_secret}&js_code=#{js_code}&grant_type=authorization_code"
+      url = "https://api.weixin.qq.com/sns/jscode2session?appid=#{OnlinePay.wx_app_id}&secret=#{OnlinePay.wx_app_secret}&js_code=#{js_code}&grant_type=authorization_code"
 
       ::JSON.parse(RestClient::Request.execute(
           {
               method: :get,
-              url:    url
+              url: url
           }.merge(options)
       ), quirks_mode: true)
     end
@@ -48,10 +48,10 @@ module OnlinePay
 
     def self.invoke_unifiedorder(params, options = {})
       params = {
-          appid:            options.delete(:appid) || OnlinePay.wx_app_id,
-          mch_id:           options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          key:              options.delete(:key) || OnlinePay.wx_key,
-          nonce_str:        SecureRandom.hex,
+          appid: options.delete(:appid) || OnlinePay.wx_app_id,
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          key: options.delete(:key) || OnlinePay.wx_key,
+          nonce_str: SecureRandom.hex,
           spbill_create_ip: ::Socket::getaddrinfo(Socket.gethostname, "echo", Socket::AF_INET)[0][3]
       }.merge(params)
 
@@ -72,9 +72,9 @@ module OnlinePay
 
     def self.invoke_closeorder(params, options = {})
       params = {
-          appid:     options.delete(:appid) || OnlinePay.wx_app_id,
-          mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          key:       options.delete(:key) || OnlinePay.wx_key,
+          appid: options.delete(:appid) || OnlinePay.wx_app_id,
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          key: options.delete(:key) || OnlinePay.wx_key,
           nonce_str: SecureRandom.hex
       }.merge(params)
 
@@ -91,10 +91,10 @@ module OnlinePay
 
     def self.generate_app_pay_req(params, options = {})
       params = {
-          appid:     options.delete(:appid) || OnlinePay.wx_app_id,
+          appid: options.delete(:appid) || OnlinePay.wx_app_id,
           partnerid: options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          key:       options.delete(:key) || OnlinePay.wx_key,
-          package:   'Sign=OnlinePay',
+          key: options.delete(:key) || OnlinePay.wx_key,
+          package: 'Sign=OnlinePay',
           timestamp: Time.now.to_i.to_s
       }.merge(params)
 
@@ -111,12 +111,12 @@ module OnlinePay
       check_required_options(params, GENERATE_JS_PAY_REQ_REQUIRED_FIELDS)
 
       params = {
-          appId:     options.delete(:appid) || OnlinePay.wx_app_id,
-          package:   "prepay_id=#{params.delete(:prepayid)}",
-          key:       options.delete(:key) || OnlinePay.wx_key,
-          nonceStr:  params.delete(:noncestr),
+          appId: options.delete(:appid) || OnlinePay.wx_app_id,
+          package: "prepay_id=#{params.delete(:prepayid)}",
+          key: options.delete(:key) || OnlinePay.wx_key,
+          nonceStr: params.delete(:noncestr),
           timeStamp: Time.now.to_i.to_s,
-          signType:  'MD5'
+          signType: 'MD5'
       }.merge(params)
 
       params[:paySign] = OnlinePay::WxSign.generate(params)
@@ -130,8 +130,8 @@ module OnlinePay
 
     def self.invoke_refund(params, options = {})
       params = {
-          appid:     options.delete(:appid) || OnlinePay.wx_app_id,
-          mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          appid: options.delete(:appid) || OnlinePay.wx_app_id,
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
           nonce_str: SecureRandom.hex,
       }.merge(params)
 
@@ -142,8 +142,8 @@ module OnlinePay
 
       options = {
           ssl_client_cert: options.delete(:apiclient_cert) || OnlinePay.wx_apiclient_cert,
-          ssl_client_key:  options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
-          verify_ssl:      OpenSSL::SSL::VERIFY_NONE
+          ssl_client_key: options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
+          verify_ssl: OpenSSL::SSL::VERIFY_NONE
       }.merge(options)
 
       r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{gateway_url}/secapi/pay/refund", make_payload(params), options)))
@@ -159,8 +159,8 @@ module OnlinePay
 
     def self.refund_query(params, options = {})
       params = {
-          appid:     options.delete(:appid) || OnlinePay.wx_app_id,
-          mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          appid: options.delete(:appid) || OnlinePay.wx_app_id,
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
           nonce_str: SecureRandom.hex
       }.merge(params)
 
@@ -180,7 +180,7 @@ module OnlinePay
     def self.invoke_transfer(params, options = {})
       params = {
           mch_appid: options.delete(:appid) || OnlinePay.wx_app_id,
-          mchid:     options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          mchid: options.delete(:mch_id) || OnlinePay.wx_mch_id,
           nonce_str: SecureRandom.hex
       }.merge(params)
 
@@ -188,8 +188,8 @@ module OnlinePay
 
       options = {
           ssl_client_cert: options.delete(:apiclient_cert) || OnlinePay.wx_apiclient_cert,
-          ssl_client_key:  options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
-          verify_ssl:      OpenSSL::SSL::VERIFY_NONE
+          ssl_client_key: options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
+          verify_ssl: OpenSSL::SSL::VERIFY_NONE
       }.merge(options)
 
       r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{gateway_url}/mmpaymkttransfers/promotion/transfers", make_payload(params), options)))
@@ -205,8 +205,8 @@ module OnlinePay
 
     def self.gettransferinfo(params, options = {})
       params = {
-          appid:     options.delete(:appid) || OnlinePay.wx_app_id,
-          mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          appid: options.delete(:appid) || OnlinePay.wx_app_id,
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
           nonce_str: SecureRandom.hex
       }.merge(params)
 
@@ -214,8 +214,8 @@ module OnlinePay
 
       options = {
           ssl_client_cert: options.delete(:apiclient_cert) || OnlinePay.wx_apiclient_cert,
-          ssl_client_key:  options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
-          verify_ssl:      OpenSSL::SSL::VERIFY_NONE
+          ssl_client_key: options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
+          verify_ssl: OpenSSL::SSL::VERIFY_NONE
       }.merge(options)
 
       r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{gateway_url}/mmpaymkttransfers/gettransferinfo", make_payload(params), options)))
@@ -231,8 +231,8 @@ module OnlinePay
 
     def self.invoke_reverse(params, options = {})
       params = {
-          appid:     options.delete(:appid) || OnlinePay.wx_app_id,
-          mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          appid: options.delete(:appid) || OnlinePay.wx_app_id,
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
           nonce_str: SecureRandom.hex
       }.merge(params)
 
@@ -240,8 +240,8 @@ module OnlinePay
 
       options = {
           ssl_client_cert: options.delete(:apiclient_cert) || OnlinePay.wx_apiclient_cert,
-          ssl_client_key:  options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
-          verify_ssl:      OpenSSL::SSL::VERIFY_NONE
+          ssl_client_key: options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
+          verify_ssl: OpenSSL::SSL::VERIFY_NONE
       }.merge(options)
 
       r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{gateway_url}/secapi/pay/reverse", make_payload(params), options)))
@@ -257,8 +257,8 @@ module OnlinePay
 
     def self.invoke_micropay(params, options = {})
       params = {
-          appid:     options.delete(:appid) || OnlinePay.wx_app_id,
-          mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          appid: options.delete(:appid) || OnlinePay.wx_app_id,
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
           nonce_str: SecureRandom.hex
       }.merge(params)
 
@@ -266,8 +266,8 @@ module OnlinePay
 
       options = {
           ssl_client_cert: options.delete(:apiclient_cert) || OnlinePay.wx_apiclient_cert,
-          ssl_client_key:  options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
-          verify_ssl:      OpenSSL::SSL::VERIFY_NONE
+          ssl_client_key: options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
+          verify_ssl: OpenSSL::SSL::VERIFY_NONE
       }.merge(options)
 
       r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{gateway_url}/pay/micropay", make_payload(params), options)))
@@ -284,8 +284,8 @@ module OnlinePay
 
     def self.order_query(params, options = {})
       params = {
-          appid:     options.delete(:appid) || OnlinePay.wx_app_id,
-          mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          appid: options.delete(:appid) || OnlinePay.wx_app_id,
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
           nonce_str: SecureRandom.hex
       }.merge(params)
 
@@ -305,8 +305,8 @@ module OnlinePay
 
     def self.download_bill(params, options = {})
       params = {
-          appid:     options.delete(:appid) || OnlinePay.wx_app_id,
-          mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          appid: options.delete(:appid) || OnlinePay.wx_app_id,
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
           nonce_str: SecureRandom.hex,
       }.merge(params)
 
@@ -323,8 +323,8 @@ module OnlinePay
     # 需要证书
     def self.sendgroupredpack(params, options = {})
       params = {
-          wxappid:   options.delete(:appid) || OnlinePay.wx_app_id,
-          mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          wxappid: options.delete(:appid) || OnlinePay.wx_app_id,
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
           nonce_str: SecureRandom.hex
       }.merge(params)
 
@@ -332,8 +332,8 @@ module OnlinePay
 
       options = {
           ssl_client_cert: options.delete(:apiclient_cert) || OnlinePay.wx_apiclient_cert,
-          ssl_client_key:  options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
-          verify_ssl:      OpenSSL::SSL::VERIFY_NONE
+          ssl_client_key: options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
+          verify_ssl: OpenSSL::SSL::VERIFY_NONE
       }.merge(options)
 
       r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{gateway_url}/mmpaymkttransfers/sendgroupredpack", make_payload(params), options)))
@@ -347,8 +347,8 @@ module OnlinePay
     # 需要证书
     def self.sendredpack(params, options = {})
       params = {
-          wxappid:   options.delete(:appid) || OnlinePay.wx_app_id,
-          mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          wxappid: options.delete(:appid) || OnlinePay.wx_app_id,
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
           nonce_str: SecureRandom.hex
       }.merge(params)
 
@@ -356,8 +356,8 @@ module OnlinePay
 
       options = {
           ssl_client_cert: options.delete(:apiclient_cert) || OnlinePay.wx_apiclient_cert,
-          ssl_client_key:  options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
-          verify_ssl:      OpenSSL::SSL::VERIFY_NONE
+          ssl_client_key: options.delete(:apiclient_key) || OnlinePay.wx_apiclient_key,
+          verify_ssl: OpenSSL::SSL::VERIFY_NONE
       }.merge(options)
 
       r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{gateway_url}/mmpaymkttransfers/sendredpack", make_payload(params), options)))
@@ -374,9 +374,9 @@ module OnlinePay
     # 不需要证书
     def self.get_sign_key(sign, options = {})
       params = {
-          mch_id:    options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
           nonce_str: SecureRandom.hex,
-          sign:      sign
+          sign: sign
       }
 
       r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{gateway_url}/pay/getsignkey", sandboxnew_make_payload(params), options)))
@@ -404,8 +404,8 @@ module OnlinePay
         sign = OnlinePay::WxSign.generate(params)
         if OnlinePay.sandboxnew_mode?
           sandboxnew_result = get_sign_key(sign)
-          params[:key]      = sandboxnew_result.fetch('sandbox_signkey', nil)
-          sign              = OnlinePay::WxSign.generate(params)
+          params[:key] = sandboxnew_result.fetch('sandbox_signkey', nil)
+          sign = OnlinePay::WxSign.generate(params)
         end
         params.delete(:key) if params[:key]
         "<xml>#{params.map { |k, v| "<#{k}>#{v}</#{k}>" }.join}<sign>#{sign}</sign></xml>"
@@ -420,8 +420,8 @@ module OnlinePay
         options = OnlinePay.wx_extra_rest_client_options.merge(options)
         RestClient::Request.execute(
             {
-                method:  :post,
-                url:     url,
+                method: :post,
+                url: url,
                 payload: payload,
                 headers: { content_type: 'application/xml' }
             }.merge(options)
