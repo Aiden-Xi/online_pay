@@ -312,7 +312,7 @@ module OnlinePay
 
       check_required_options(params, DOWNLOAD_BILL_REQUIRED_FIELDS)
 
-      r = invoke_remote("#{gateway_url}/pay/downloadbill", make_payload(params), options)
+      r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{gateway_url}/pay/downloadbill", make_payload(params), options)))
 
       yield r if block_given?
 
@@ -320,20 +320,34 @@ module OnlinePay
     end
 
     # 获取汇率换算 - URL: https://api.mch.weixin.qq.com/pay/queryexchagerate
-    def self.get_exchange_rate(params, options ={})
+    def self.get_exchange_rate(params, options = {})
       params = {
           appid: options.delete(:appid) || OnlinePay.wx_app_id,
           mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
-          nonce_str: SecureRandom.hex,
       }.merge(params)
 
       check_required_options(params, DOWNLOAD_BILL_REQUIRED_FIELDS)
 
-      r = invoke_remote("#{gateway_url}/pay/queryexchagerate", make_payload(params), options)
+      r = Hash.from_xml(invoke_remote("#{gateway_url}/pay/queryexchagerate", make_payload(params), options)).dig('xml')
 
       yield r if block_given?
 
-      r
+      # FIXME: 20200326 当前时间，返回的数据结构，需要对rate做优化, 这里返回的数据长度有问题：
+      # {
+      #     "return_code" => "SUCCESS",
+      #     "return_msg" => "OK",
+      #     "appid" => "wxfe25f02f90292ae0",
+      #     "mch_id" => "1453375002",
+      #     "fee_type" => "AUD",
+      #     "rate_time" => "20200321",
+      #     "rate" => "412550100",
+      #     "sign" => "1B407EB855C912139E22563614E4042C"
+      # }
+      if r['return_code'] == OnlinePay::WxResult::SUCCESS && r['rate'].length == 9
+        r['rate'] = ('%.4f' % (r['rate'][0..4].to_f / 10000))
+      end
+
+      return r
     end
 
     # 发送裂变红包 - URL：https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack
@@ -387,7 +401,7 @@ module OnlinePay
     # end
     # TODO: - 撤销
 
-    # 获取 sandboxnew 验签秘钥API - URL: https://api.mch.weixin.qq.com/sandboxnew/pay/getsignkey
+    # 获取 sandbox_new 验签秘钥API - URL: https://api.mch.weixin.qq.com/sandboxnew/pay/getsignkey
     # 不需要证书
     def self.get_sign_key(sign, options = {})
       params = {
@@ -396,7 +410,7 @@ module OnlinePay
           sign: sign
       }
 
-      r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{gateway_url}/pay/getsignkey", sandboxnew_make_payload(params), options)))
+      r = OnlinePay::WxResult.new(Hash.from_xml(invoke_remote("#{gateway_url}/pay/getsignkey", sandbox_new_make_payload(params), options)))
 
       yield r if block_given?
 
@@ -407,7 +421,7 @@ module OnlinePay
       private
 
       def gateway_url
-        OnlinePay.sandboxnew_mode? ? 'https://api.mch.weixin.qq.com/sandboxnew' : 'https://api.mch.weixin.qq.com'
+        OnlinePay.sandbox_new_mode? ? 'https://api.mch.weixin.qq.com/sandboxnew'.freeze : 'https://api.mch.weixin.qq.com'.freeze
       end
 
       def check_required_options(options, names)
@@ -419,16 +433,16 @@ module OnlinePay
 
       def make_payload(params)
         sign = OnlinePay::WxSign.generate(params)
-        if OnlinePay.sandboxnew_mode?
-          sandboxnew_result = get_sign_key(sign)
-          params[:key] = sandboxnew_result.fetch('sandbox_signkey', nil)
+        if OnlinePay.sandbox_new_mode?
+          sandbox_new_result = get_sign_key(sign)
+          params[:key] = sandbox_new_result.fetch('sandbox_signkey', nil)
           sign = OnlinePay::WxSign.generate(params)
         end
         params.delete(:key) if params[:key]
         "<xml>#{params.map { |k, v| "<#{k}>#{v}</#{k}>" }.join}<sign>#{sign}</sign></xml>"
       end
 
-      def sandboxnew_make_payload(params)
+      def sandbox_new_make_payload(params)
         params.delete(:key) if params[:key]
         "<xml>#{params.map { |k, v| "<#{k}>#{v}</#{k}>" }.join}</xml>"
       end
