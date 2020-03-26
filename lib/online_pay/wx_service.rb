@@ -319,6 +319,23 @@ module OnlinePay
       r
     end
 
+    # 获取汇率换算 - URL: https://api.mch.weixin.qq.com/pay/queryexchagerate
+    def self.get_exchange_rate(params, options ={})
+      params = {
+          appid: options.delete(:appid) || OnlinePay.wx_app_id,
+          mch_id: options.delete(:mch_id) || OnlinePay.wx_mch_id,
+          nonce_str: SecureRandom.hex,
+      }.merge(params)
+
+      check_required_options(params, DOWNLOAD_BILL_REQUIRED_FIELDS)
+
+      r = invoke_remote("#{gateway_url}/pay/queryexchagerate", make_payload(params), options)
+
+      yield r if block_given?
+
+      r
+    end
+
     # 发送裂变红包 - URL：https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack
     # 需要证书
     def self.sendgroupredpack(params, options = {})
